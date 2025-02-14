@@ -10,7 +10,7 @@ type SecurityLogDisplayProps = {
 	timestamp: string;
 	actor: string;
 	setting: string;
-	settingType: string;
+	settingType: 'string' | 'code';
 	changedFrom: string;
 	changedTo: string;
 	onCancel: () => void;
@@ -29,10 +29,10 @@ export const SecurityLogDisplay = ({
 	return (
 		<Modal>
 			<Modal.Header>
-				<Modal.Title>{t('Security_Log_Display')}</Modal.Title>
+				<Modal.Title>{t('Setting_change')}</Modal.Title>
 				<Modal.Close onClick={onCancel} />
 			</Modal.Header>
-			<Modal.Content>
+			<Modal.Content mbe={16}>
 				<InfoPanelLabel>{t('Timestamp')}</InfoPanelLabel>
 				<InfoPanelText>{moment(timestamp).format('MMMM Do YYYY, h:mm:ss a')}</InfoPanelText>
 
@@ -50,13 +50,13 @@ export const SecurityLogDisplay = ({
 				</Box>
 
 				<InfoPanelLabel>{t('Setting')}</InfoPanelLabel>
-				{settingType === 'code' ? <CodeDisplay code={setting} /> : <InfoPanelText>{t(setting)}</InfoPanelText>}
+				<InfoPanelText>{t(setting)}</InfoPanelText>
 
 				<InfoPanelLabel>{t('Changed_from')}</InfoPanelLabel>
-				<InfoPanelText>{changedFrom}</InfoPanelText>
+				{settingType === 'code' ? <CodeDisplay code={changedFrom} /> : <InfoPanelText>{changedFrom}</InfoPanelText>}
 
 				<InfoPanelLabel>{t('Changed_to')}</InfoPanelLabel>
-				<InfoPanelText>{changedTo}</InfoPanelText>
+				{settingType === 'code' ? <CodeDisplay code={changedTo} /> : <InfoPanelText>{changedTo}</InfoPanelText>}
 			</Modal.Content>
 		</Modal>
 	);
