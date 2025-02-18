@@ -74,7 +74,7 @@ export class LDAPEEManager extends LDAPManager {
 						return true;
 					}
 
-					if (activeUsers + usersInserted >= maxUsersAllowed) {
+					if (this.willExceedLicenseLimit(activeUsers, usersInserted, maxUsersAllowed)) {
 						logger.info('Max users allowed reached, skipping import of user ', (data as IImportUser).username);
 						return false;
 					}
@@ -98,6 +98,10 @@ export class LDAPEEManager extends LDAPManager {
 		}
 
 		ldap.disconnect();
+	}
+
+	public static willExceedLicenseLimit(activeUsers: number, usersInserted: number, maxUsersAllowed: number): boolean {
+		return activeUsers + usersInserted >= maxUsersAllowed;
 	}
 
 	public static async syncAvatars(): Promise<void> {
