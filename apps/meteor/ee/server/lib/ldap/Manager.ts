@@ -70,14 +70,16 @@ export class LDAPEEManager extends LDAPManager {
 					}
 
 					const userExists = await converter.findExistingUser(data as IImportUser);
-					if (!userExists) {
-						if (activeUsers + usersInserted >= maxUsersAllowed) {
-							logger.info('Max users allowed reached, skipping import of user ', (data as IImportUser).username);
-							return false;
-						}
-						usersInserted++;
+					if (userExists) {
+						return true;
 					}
 
+					if (activeUsers + usersInserted >= maxUsersAllowed) {
+						logger.info('Max users allowed reached, skipping import of user ', (data as IImportUser).username);
+						return false;
+					}
+
+					usersInserted++;
 					return true;
 				}) as ImporterBeforeImportCallback,
 				afterImportFn: (async ({ data }, isNewRecord: boolean): Promise<void> => {
