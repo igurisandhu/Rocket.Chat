@@ -38,44 +38,47 @@ const PermissionGuard = ({ children, permission }: { children: ReactNode; permis
 
 let unregisterAuditRoutes: () => void;
 
-
-
 onToggledFeature('auditing', {
 	up: () => {
 		unregisterAuditRoutes = router.defineRoutes([
-	{
-		path: '/audit/:tab?',
-		id: 'audit-home',
-		element: appLayout.wrap(
-			<MainLayout>
-				<PermissionGuard permission='can-audit'>
-					<AuditPage />
-				</PermissionGuard>
-			</MainLayout>,
-		),
+			{
+				path: '/audit/:tab?',
+				id: 'audit-home',
+				element: appLayout.wrap(
+					<MainLayout>
+						<PermissionGuard permission='can-audit'>
+							<AuditPage />
+						</PermissionGuard>
+					</MainLayout>,
+				),
+			},
+			{
+				path: '/audit-log',
+				id: 'audit-log',
+				element: appLayout.wrap(
+					<MainLayout>
+						<PermissionGuard permission='can-audit-log'>
+							<AuditLogPage />
+						</PermissionGuard>
+					</MainLayout>,
+				),
+			},
+			{
+				path: '/security-logs',
+				id: 'security-logs',
+				element: appLayout.wrap(
+					<SettingsProvider privileged>
+						<MainLayout>
+							<PermissionGuard permission='can-audit-log'>
+								<SecurityLogsPage />
+							</PermissionGuard>
+						</MainLayout>
+					</SettingsProvider>,
+				),
+			},
+		]);
 	},
-	{
-		path: '/audit-log',
-		id: 'audit-log',
-		element: appLayout.wrap(
-			<MainLayout>
-				<PermissionGuard permission='can-audit-log'>
-					<AuditLogPage />
-				</PermissionGuard>
-			</MainLayout>,
-		),
+	down: () => {
+		unregisterAuditRoutes();
 	},
-	{
-		path: '/security-logs',
-		id: 'security-logs',
-		element: appLayout.wrap(
-			<SettingsProvider privileged>
-				<MainLayout>
-					<SecurityLogsPage />
-				</MainLayout>
-			</SettingsProvider>,
-		),
-	},
-]);
-
-console.log('auditStartup');
+});
