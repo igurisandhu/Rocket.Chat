@@ -1,6 +1,7 @@
 import { Box, Button, ButtonGroup, Field, FieldLabel, Margins, Pagination } from '@rocket.chat/fuselage';
 import { UserAvatar } from '@rocket.chat/ui-avatar';
-import { useSetModal } from '@rocket.chat/ui-contexts';
+import { useEndpoint, useSetModal } from '@rocket.chat/ui-contexts';
+import { useQuery } from '@tanstack/react-query';
 import { useState, type ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -32,6 +33,12 @@ const SecurityLogsTable = (): ReactElement => {
 		end: createEndOfToday(),
 	}));
 
+	const [query, setQuery] = useState({
+		start: new Date(0).toISOString(),
+		end: new Date().toISOString(),
+		filter: '{}',
+	});
+
 	const { current, itemsPerPage, setItemsPerPage: onSetItemsPerPage, setCurrent: onSetCurrent, ...paginationProps } = usePagination();
 
 	// const handleExportJson = () => {
@@ -41,10 +48,22 @@ const SecurityLogsTable = (): ReactElement => {
 	const handleClearFilters = () => {
 		setSetting('');
 		setDateRange({ start: createStartOfToday(), end: createEndOfToday() });
+		setQuery({
+			start: new Date(0).toISOString(),
+			end: new Date().toISOString(),
+			filter: '{}',
+		});
+		onSetCurrent(0);
 	};
 
 	const handleApplyFilters = () => {
-		return undefined;
+		const { start, end } = dateRange;
+		setQuery({
+			start: start?.toISOString() ?? new Date(0).toISOString(),
+			end: end?.toISOString() ?? new Date().toISOString(),
+			filter: JSON.stringify({ settingId: setting }),
+		});
+		onSetCurrent(0);
 	};
 
 	const handleItemClick = ({
@@ -57,7 +76,7 @@ const SecurityLogsTable = (): ReactElement => {
 	}: {
 		actor: string;
 		timestamp: string;
-		setting: string;
+		setting: unknown;
 		changedFrom: string;
 		changedTo: string;
 		type: 'code' | 'string';
@@ -67,7 +86,7 @@ const SecurityLogsTable = (): ReactElement => {
 				settingType={type}
 				timestamp={timestamp}
 				actor={actor}
-				setting={setting}
+				setting={String(setting)}
 				changedFrom={changedFrom}
 				changedTo={changedTo}
 				onCancel={() => setModal(null)}
@@ -75,63 +94,18 @@ const SecurityLogsTable = (): ReactElement => {
 		);
 	};
 
-	// const getAudits = useMethod('auditGetAuditions');
+	const getAudits = useEndpoint('GET', '/v1/audit.settings');
 
-	// const { data, isLoading, isSuccess } = useQuery({
-	// 	queryKey: ['audits', dateRange],
+	const { data, isLoading, isSuccess } = useQuery({
+		queryKey: ['audit.settings', query, itemsPerPage, current],
 
-	// 	queryFn: async () => {
-	// 		const { start, end } = dateRange;
-	// 		return getAudits({ startDate: start ?? new Date(0), endDate: end ?? new Date() });
-	// 	},
-	// 	meta: {
-	// 		apiErrorToastMessage: true,
-	// 	},
-	// });
-
-	// Mock Data, Remove once endpoint exists
-	const data = [
-		{
-			_id: '1',
-			actor: 'lero1',
-			timestamp: '2021-10-01T00:00:00.000Z',
-			setting: 'Show_message_in_email_notification',
-			changedFrom: 'false',
-			changedTo: 'true',
-			type: 'string' as const,
+		queryFn: async () => {
+			return getAudits({ ...query, ...(itemsPerPage && { count: itemsPerPage }), ...(current && { offset: current }) });
 		},
-		{
-			_id: '2',
-			actor: 'lero2',
-			timestamp: '2021-10-01T00:00:00.000Z',
-			setting: 'Show_message_in_email_notification',
-			changedFrom: 'false',
-			changedTo: 'true',
-			type: 'string' as const,
+		meta: {
+			apiErrorToastMessage: true,
 		},
-		{
-			_id: '3',
-			actor: 'lero3',
-			timestamp: '2021-10-01T00:00:00.000Z',
-			setting: 'Show_message_in_email_notification',
-			changedFrom: 'console.log("test")',
-			changedTo: 'console.testing.long.string.test.test.test.test.test.test.test("Hello Test!")',
-			type: 'code' as const,
-		},
-		// Generate more 50 entries
-		...Array.from({ length: 50 }, (_, index) => ({
-			_id: `${index + 4}`,
-			actor: `lero${index + 4}`,
-			timestamp: '2021-10-01T00:00:00.000Z',
-			setting: 'Show_message_in_email_notification',
-			changedFrom: 'false',
-			changedTo: 'true',
-			type: 'string' as const,
-		})),
-	];
-
-	const isLoading = false;
-	const isSuccess = true;
+	});
 
 	const headers = (
 		<>
@@ -181,31 +155,54 @@ const SecurityLogsTable = (): ReactElement => {
 					</GenericTableBody>
 				</GenericTable>
 			)}
-			{isSuccess && data.length === 0 && <GenericNoResults />}
-			{isSuccess && data.length > 0 && (
+			{isSuccess && data.total === 0 && (
+				<GenericNoResults
+					title={t('No_results_found')}
+					description={t('Try_different_filters')}
+					buttonTitle={t('Clear_filters')}
+					buttonAction={handleClearFilters}
+				/>
+			)}
+			{isSuccess && data.total > 0 && (
 				<GenericTable>
 					<GenericTableHeader>{headers}</GenericTableHeader>
 					<GenericTableBody>
-						{data.map((item) => (
-							<GenericTableRow key={item._id} role='link' action tabIndex={0} onClick={() => handleItemClick({ ...item })}>
+						{data.events.map((item) => (
+							<GenericTableRow
+								key={item.ts}
+								role='link'
+								action
+								tabIndex={0}
+								onClick={() =>
+									handleItemClick({
+										actor: item.actor.type === 'user' ? item.actor.username : item.actor.type,
+										timestamp: new Date(item.ts).toDateString(),
+										setting: item.data[0].value,
+										changedFrom: String(item.data[1].value),
+										changedTo: String(item.data[2].value),
+										// TODO: find a way to get setting type
+										type: 'string',
+									})
+								}
+							>
 								<GenericTableCell withTruncatedText>
-									<Box display='flex' alignItems='center' mbe={16}>
-										<UserAvatar size='x24' username={item.actor} />
-										<Box display='flex' withTruncatedText mi={8}>
-											<Box display='flex' flexDirection='column' alignSelf='center' withTruncatedText>
-												<Box fontScale='p2m' withTruncatedText color='default'>
-													{item.actor}
-												</Box>
+									<Box display='flex' alignItems='center'>
+										{item.actor.type === 'user' && (
+											<Box mie={4}>
+												<UserAvatar size='x24' username={item.actor.username} />
 											</Box>
+										)}
+										<Box fontScale='p2m' withTruncatedText color='default'>
+											{item.actor.type === 'user' ? item.actor.username : item.actor.type}
 										</Box>
 									</Box>
 								</GenericTableCell>
-								<GenericTableCell withTruncatedText>{item.timestamp}</GenericTableCell>
-								<GenericTableCell withTruncatedText title={t(item.setting)}>
-									{item.setting}
+								<GenericTableCell withTruncatedText>{item.ts}</GenericTableCell>
+								<GenericTableCell withTruncatedText title={t(String(item.data[0].value))}>
+									{String(item.data[0].value)}
 								</GenericTableCell>
-								<GenericTableCell withTruncatedText>{item.changedFrom}</GenericTableCell>
-								<GenericTableCell withTruncatedText>{item.changedTo}</GenericTableCell>
+								<GenericTableCell withTruncatedText>{String(item.data[1].value)}</GenericTableCell>
+								<GenericTableCell withTruncatedText>{String(item.data[2].value)}</GenericTableCell>
 							</GenericTableRow>
 						))}
 					</GenericTableBody>
@@ -215,7 +212,7 @@ const SecurityLogsTable = (): ReactElement => {
 				divider
 				current={current}
 				itemsPerPage={itemsPerPage}
-				count={data.length || 0}
+				count={data?.total || 0}
 				onSetItemsPerPage={onSetItemsPerPage}
 				onSetCurrent={onSetCurrent}
 				{...paginationProps}

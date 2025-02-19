@@ -34,7 +34,7 @@ export const SettingSelect = ({
 			withTitle={withTitle}
 			flexShrink={1}
 			value={value}
-			onChange={onChange}
+			onChange={(val) => onChange(val)}
 			placeholder={t('All_settings')}
 			filter={filter}
 			// TODO: Fix the types on PaginatedSelectFiltered
