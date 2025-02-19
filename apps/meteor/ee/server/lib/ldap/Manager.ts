@@ -53,9 +53,6 @@ export class LDAPEEManager extends LDAPManager {
 			}
 
 			const membersOfGroupFilter = await ldap.searchMembersOfGroupFilter();
-			let usersInserted = 0;
-			const activeUsers = await Users.getActiveLocalUserCount();
-			const maxUsersAllowed = License.getMaxActiveUsers();
 
 			await converter.convertData({
 				beforeImportFn: (async ({ options, data }: IImportRecord): Promise<boolean> => {
@@ -74,12 +71,11 @@ export class LDAPEEManager extends LDAPManager {
 						return true;
 					}
 
-					if (this.willExceedLicenseLimit(activeUsers, usersInserted, maxUsersAllowed)) {
-						logger.info('Max users allowed reached, skipping import of user ', (data as IImportUser).username);
+					if (await License.shouldPreventAction('activeUsers', 1)) {
+						logger.warn('Max users allowed reached, skipping import of user ', (data as IImportUser).username);
 						return false;
 					}
 
-					usersInserted++;
 					return true;
 				}) as ImporterBeforeImportCallback,
 				afterImportFn: (async ({ data }, isNewRecord: boolean): Promise<void> => {
@@ -98,10 +94,6 @@ export class LDAPEEManager extends LDAPManager {
 		}
 
 		ldap.disconnect();
-	}
-
-	public static willExceedLicenseLimit(activeUsers: number, usersInserted: number, maxUsersAllowed: number): boolean {
-		return activeUsers + usersInserted >= maxUsersAllowed;
 	}
 
 	public static async syncAvatars(): Promise<void> {
