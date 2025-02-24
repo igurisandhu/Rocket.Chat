@@ -36,7 +36,7 @@ const SecurityLogsTable = (): ReactElement => {
 	const [query, setQuery] = useState({
 		start: new Date(0).toISOString(),
 		end: new Date().toISOString(),
-		filter: '{}',
+		settingId: '',
 	});
 
 	const { current, itemsPerPage, setItemsPerPage: onSetItemsPerPage, setCurrent: onSetCurrent, ...paginationProps } = usePagination();
@@ -51,7 +51,7 @@ const SecurityLogsTable = (): ReactElement => {
 		setQuery({
 			start: new Date(0).toISOString(),
 			end: new Date().toISOString(),
-			filter: '{}',
+			settingId: '',
 		});
 		onSetCurrent(0);
 	};
@@ -61,7 +61,7 @@ const SecurityLogsTable = (): ReactElement => {
 		setQuery({
 			start: start?.toISOString() ?? new Date(0).toISOString(),
 			end: end?.toISOString() ?? new Date().toISOString(),
-			filter: JSON.stringify({ settingId: setting }),
+			settingId: setting,
 		});
 		onSetCurrent(0);
 	};
