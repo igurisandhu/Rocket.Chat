@@ -99,9 +99,6 @@ const SecurityLogsTable = (): ReactElement => {
 		queryFn: async () => {
 			return getAudits({ ...query, ...(itemsPerPage && { count: itemsPerPage }), ...(current && { offset: current }) });
 		},
-		meta: {
-			apiErrorToastMessage: true,
-		},
 	});
 
 	const headers = (
