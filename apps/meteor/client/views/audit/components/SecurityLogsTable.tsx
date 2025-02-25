@@ -72,18 +72,15 @@ const SecurityLogsTable = (): ReactElement => {
 		setting,
 		changedFrom,
 		changedTo,
-		type,
 	}: {
 		actor: string;
 		timestamp: string;
 		setting: unknown;
 		changedFrom: string;
 		changedTo: string;
-		type: 'code' | 'string';
 	}) => {
 		setModal(
 			<SecurityLogDisplay
-				settingType={type}
 				timestamp={timestamp}
 				actor={actor}
 				setting={String(setting)}
@@ -180,8 +177,6 @@ const SecurityLogsTable = (): ReactElement => {
 										setting: item.data[0].value,
 										changedFrom: String(item.data[1].value),
 										changedTo: String(item.data[2].value),
-										// TODO: find a way to get setting type
-										type: 'string',
 									})
 								}
 							>

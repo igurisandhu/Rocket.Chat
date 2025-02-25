@@ -1,5 +1,6 @@
 import { Box, Modal } from '@rocket.chat/fuselage';
 import { UserAvatar } from '@rocket.chat/ui-avatar';
+import { useSettingStructure } from '@rocket.chat/ui-contexts';
 import moment from 'moment';
 import { useTranslation } from 'react-i18next';
 
@@ -10,22 +11,14 @@ type SecurityLogDisplayProps = {
 	timestamp: string;
 	actor: string;
 	setting: string;
-	settingType: 'string' | 'code';
 	changedFrom: string;
 	changedTo: string;
 	onCancel: () => void;
 };
 
-export const SecurityLogDisplay = ({
-	timestamp,
-	actor,
-	setting,
-	settingType,
-	changedFrom,
-	changedTo,
-	onCancel,
-}: SecurityLogDisplayProps) => {
+export const SecurityLogDisplay = ({ timestamp, actor, setting, changedFrom, changedTo, onCancel }: SecurityLogDisplayProps) => {
 	const { t } = useTranslation();
+	const settingStructure = useSettingStructure(setting);
 	return (
 		<Modal>
 			<Modal.Header>
@@ -53,10 +46,10 @@ export const SecurityLogDisplay = ({
 				<InfoPanelText>{t(setting)}</InfoPanelText>
 
 				<InfoPanelLabel>{t('Changed_from')}</InfoPanelLabel>
-				{settingType === 'code' ? <CodeDisplay code={changedFrom} /> : <InfoPanelText>{changedFrom}</InfoPanelText>}
+				{settingStructure?.type === 'code' ? <CodeDisplay code={changedFrom} /> : <InfoPanelText>{changedFrom}</InfoPanelText>}
 
 				<InfoPanelLabel>{t('Changed_to')}</InfoPanelLabel>
-				{settingType === 'code' ? <CodeDisplay code={changedTo} /> : <InfoPanelText>{changedTo}</InfoPanelText>}
+				{settingStructure?.type === 'code' ? <CodeDisplay code={changedTo} /> : <InfoPanelText>{changedTo}</InfoPanelText>}
 			</Modal.Content>
 		</Modal>
 	);
