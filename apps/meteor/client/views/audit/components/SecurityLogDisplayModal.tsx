@@ -1,10 +1,9 @@
-import { Box } from '@rocket.chat/fuselage';
+import { Box, CodeSnippet } from '@rocket.chat/fuselage';
 import { UserAvatar } from '@rocket.chat/ui-avatar';
 import { useSettingStructure } from '@rocket.chat/ui-contexts';
 import moment from 'moment';
 import { useTranslation } from 'react-i18next';
 
-import { CodeDisplay } from './CodeDisplay';
 import GenericModal from '../../../components/GenericModal';
 import { InfoPanelLabel, InfoPanelText } from '../../../components/InfoPanel';
 
@@ -47,10 +46,22 @@ export const SecurityLogDisplay = ({ timestamp, actor, setting, changedFrom, cha
 			<InfoPanelText>{t(setting)}</InfoPanelText>
 
 			<InfoPanelLabel>{t('Changed_from')}</InfoPanelLabel>
-			{settingStructure?.type === 'code' ? <CodeDisplay code={changedFrom} /> : <InfoPanelText>{changedFrom}</InfoPanelText>}
+			{settingStructure?.type === 'code' ? (
+				<CodeSnippet aria-label='code_setting' mbs={8}>
+					{changedFrom}
+				</CodeSnippet>
+			) : (
+				<InfoPanelText>{changedFrom}</InfoPanelText>
+			)}
 
 			<InfoPanelLabel>{t('Changed_to')}</InfoPanelLabel>
-			{settingStructure?.type === 'code' ? <CodeDisplay code={changedTo} /> : <InfoPanelText>{changedTo}</InfoPanelText>}
+			{settingStructure?.type === 'code' ? (
+				<CodeSnippet aria-label='code_setting' mbs={8}>
+					{changedTo}
+				</CodeSnippet>
+			) : (
+				<InfoPanelText>{changedTo}</InfoPanelText>
+			)}
 		</GenericModal>
 	);
 };

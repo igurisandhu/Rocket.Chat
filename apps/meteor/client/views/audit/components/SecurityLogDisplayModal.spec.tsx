@@ -20,7 +20,6 @@ describe('SecurityLogDisplay', () => {
 				timestamp={props.timestamp}
 				actor={props.actor}
 				setting={props.setting}
-				settingType={props.settingType}
 				changedFrom={props.changedFrom}
 				changedTo={props.changedTo}
 				onCancel={() => undefined}
@@ -44,7 +43,6 @@ describe('SecurityLogDisplay', () => {
 				timestamp={props.timestamp}
 				actor={props.actor}
 				setting={props.setting}
-				settingType={props.settingType}
 				changedFrom={props.changedFrom}
 				changedTo={props.changedTo}
 				onCancel={() => undefined}
@@ -89,7 +87,6 @@ describe('SecurityLogDisplay', () => {
 				timestamp={props.timestamp}
 				actor={props.actor}
 				setting={props.setting}
-				settingType={props.settingType}
 				changedFrom={props.changedFrom}
 				changedTo={props.changedTo}
 				onCancel={() => undefined}
