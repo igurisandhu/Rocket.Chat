@@ -9,7 +9,6 @@ export default {
 		timestamp: '2021-10-01T00:00:00.000Z',
 		actor: 'John Doe',
 		setting: 'Show_message_in_email_notification',
-		settingType: 'string',
 		changedFrom: 'false',
 		changedTo: 'true',
 	},

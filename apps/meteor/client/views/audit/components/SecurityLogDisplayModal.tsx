@@ -20,12 +20,7 @@ export const SecurityLogDisplay = ({ timestamp, actor, setting, changedFrom, cha
 	const { t } = useTranslation();
 	const settingStructure = useSettingStructure(setting);
 	return (
-		<GenericModal
-			icon={null}
-			// confirmText={t('Add')}
-			onClose={onCancel}
-			title={t('Setting_change')}
-		>
+		<GenericModal icon={null} onClose={onCancel} title={t('Setting_change')}>
 			<InfoPanelLabel>{t('Timestamp')}</InfoPanelLabel>
 			<InfoPanelText>{moment(timestamp).format('MMMM Do YYYY, h:mm:ss a')}</InfoPanelText>
 

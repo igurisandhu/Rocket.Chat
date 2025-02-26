@@ -4,6 +4,18 @@ import moment from 'moment';
 
 import { SecurityLogDisplay } from './SecurityLogDisplayModal';
 
+let type = 'string';
+
+jest.mock('@rocket.chat/ui-contexts', () => {
+	const originalModule = jest.requireActual('@rocket.chat/ui-contexts');
+
+	return {
+		__esModule: true,
+		...originalModule,
+		useSettingStructure: () => ({ type }),
+	};
+});
+
 describe('SecurityLogDisplay', () => {
 	it('should render', () => {
 		const props = {
@@ -73,6 +85,7 @@ describe('SecurityLogDisplay', () => {
 	});
 
 	it('should display code type settings', () => {
+		type = 'code';
 		const props = {
 			timestamp: '2021-10-01T00:00:00.000Z',
 			actor: 'John Doe',
