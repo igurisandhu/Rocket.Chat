@@ -74,8 +74,8 @@ describe('SecurityLogDisplay', () => {
 		const setting = screen.getByText(props.setting);
 		expect(setting).toBeVisible();
 
-		const changedFromCode = screen.queryByLabelText('code_setting');
-		expect(changedFromCode).toBeNull();
+		const changedFromCode = screen.queryAllByRole('code')[0];
+		expect(changedFromCode).toBeUndefined();
 
 		const changedFrom = screen.getByText(props.changedFrom);
 		expect(changedFrom).toBeVisible();
@@ -107,7 +107,8 @@ describe('SecurityLogDisplay', () => {
 			{ wrapper: mockAppRoot().withJohnDoe().build() },
 		);
 
-		const changedFrom = screen.queryAllByLabelText('code_setting')[0];
-		expect(changedFrom).toBeVisible();
+		const changedFromCode = screen.queryAllByRole('code')[0];
+
+		expect(changedFromCode).toHaveTextContent(props.changedFrom);
 	});
 });

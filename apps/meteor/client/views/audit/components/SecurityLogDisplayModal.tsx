@@ -41,22 +41,10 @@ export const SecurityLogDisplay = ({ timestamp, actor, setting, changedFrom, cha
 			<InfoPanelText>{t(setting)}</InfoPanelText>
 
 			<InfoPanelLabel>{t('Changed_from')}</InfoPanelLabel>
-			{settingStructure?.type === 'code' ? (
-				<CodeSnippet aria-label='code_setting' mbs={8}>
-					{changedFrom}
-				</CodeSnippet>
-			) : (
-				<InfoPanelText>{changedFrom}</InfoPanelText>
-			)}
+			{settingStructure?.type === 'code' ? <CodeSnippet>{changedFrom}</CodeSnippet> : <InfoPanelText>{changedFrom}</InfoPanelText>}
 
 			<InfoPanelLabel>{t('Changed_to')}</InfoPanelLabel>
-			{settingStructure?.type === 'code' ? (
-				<CodeSnippet aria-label='code_setting' mbs={8}>
-					{changedTo}
-				</CodeSnippet>
-			) : (
-				<InfoPanelText>{changedTo}</InfoPanelText>
-			)}
+			{settingStructure?.type === 'code' ? <CodeSnippet>{changedTo}</CodeSnippet> : <InfoPanelText>{changedTo}</InfoPanelText>}
 		</GenericModal>
 	);
 };
