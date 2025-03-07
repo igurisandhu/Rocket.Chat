@@ -1,8 +1,8 @@
 import type { IVoipRoom, ICallerInfo, VoIpCallerInfo } from '@rocket.chat/core-typings';
 import type { Device } from '@rocket.chat/ui-contexts';
-import { createContext, useContext, useMemo, useSyncExternalStore } from 'react';
+import { createContext, useContext, useMemo } from 'react';
+import { useSyncExternalStore } from 'use-sync-external-store/shim';
 
-import { useHasLicenseModule } from '../hooks/useHasLicenseModule';
 import type { VoIPUser } from '../lib/voip/VoIPUser';
 
 export type CallContextValue = CallContextDisabled | CallContextReady | CallContextError | CallContextEnabled;
@@ -78,7 +78,7 @@ const CallContextValueDefault: CallContextValue = {
 
 export const CallContext = createContext<CallContextValue>(CallContextValueDefault);
 
-export const useIsVoipEnterprise = (): boolean => useHasLicenseModule('voip-enterprise') === true;
+export const useIsVoipEnterprise = (): boolean => false;
 
 export const useIsCallEnabled = (): boolean => {
 	const { enabled } = useContext(CallContext);
@@ -234,7 +234,8 @@ export const useVoipOutboundStates = (): {
 	outBoundCallsEnabled: boolean;
 	outBoundCallsEnabledForUser: boolean;
 } => {
-	const isEnterprise = useIsVoipEnterprise();
+	// Enterprise features disabled, so outbound calls are not allowed
+	const isEnterprise = false;
 	const callerInfo = useCallerInfo();
 
 	return {

@@ -11,7 +11,7 @@ import { configureServer } from './configuration';
 import { registerServices } from './services/startup';
 import { startup } from './startup';
 import { settings } from '../app/settings/server';
-import { startRocketChat } from '../startRocketChat';
+import { startRocketChat } from '../startRocketChatFOSS';
 
 import './routes';
 import '../app/lib/server/startup';

@@ -1,0 +1,15 @@
+{
+  "name": "@rocket.chat/network-broker",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Placeholder for Rocket.Chat network-broker module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch --preserveWatchOutput"
+  },
+  "devDependencies": {
+    "typescript": "^5.3.3"
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "name": "@rocket.chat/omnichannel-services",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Placeholder for Rocket.Chat omnichannel-services module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch --preserveWatchOutput"
+  },
+  "devDependencies": {
+    "typescript": "^5.3.3"
+  },
+  "dependencies": {
+    "@rocket.chat/core-typings": "workspace:^"
+  }
+}

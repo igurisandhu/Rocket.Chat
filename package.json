@@ -25,10 +25,7 @@
 	},
 	"workspaces": [
 		"apps/*",
-		"packages/*",
-		"ee/apps/*",
-		"ee/packages/*",
-		"apps/meteor/ee/server/services"
+		"packages/*"
 	],
 	"repository": {
 		"type": "git",
@@ -42,7 +39,7 @@
 	"homepage": "https://github.com/RocketChat/Rocket.Chat#readme",
 	"engines": {
 		"yarn": "4.6.0",
-		"node": "22.13.1",
+		"node": ">=22.11.0",
 		"npm": "Use yarn instead"
 	},
 	"packageManager": "yarn@4.6.0",
@@ -54,7 +51,7 @@
 		]
 	},
 	"volta": {
-		"node": "22.13.1",
+		"node": ">=22.11.0",
 		"yarn": "1.22.18"
 	},
 	"resolutions": {
